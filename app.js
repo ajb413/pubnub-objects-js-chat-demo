@@ -46,7 +46,6 @@ submit.addEventListener('click', sendMessage);
 
 // Lists the members for the selected chat in the UI
 const addToMemberList = (member) => {
-    console.log('addToMemberList', member);
     const userId = member.id;
     const name = member.name;
 
@@ -57,15 +56,21 @@ const addToMemberList = (member) => {
     const alreadyInList = document.getElementById(userId);
     const isMe = pubnub.getUUID() === userId;
 
-    if (alreadyInList) {
-        removeFromMemberList(member.uuid);
-    } 
+    // // uncomment this if you don't want users to see
+    // //     themselves listed as members of the chat
+    // if (isMe) {
+    //     return;
+    // }
 
-    if (isMe) {
-        return;
+    if (!alreadyInList) {
+        memberList.appendChild(userListDomElement);
     }
+};
 
-    memberList.appendChild(userListDomElement);
+// Removes a member from the member list UI
+const removeFromMemberList = (uuid) => {
+    const div = document.getElementById(uuid);
+    if (div) div.remove();
 };
 
 
@@ -96,7 +101,10 @@ const initChatApp = () => {
                 pubnub.getMembers(
                 {
                     spaceId: spaceEvent.id,
-                    limit: 100
+                    limit: 100,
+                    include: {
+                        userFields: true
+                    }
                 },
                 (status, response) => {
                     if (status.statusCode !== 200) {
@@ -109,7 +117,7 @@ const initChatApp = () => {
                                 userHasJoinedChat = true;
                             }
 
-                            addToMemberList(member);
+                            addToMemberList(member.user);
                         });
 
                         if (!userHasJoinedChat) {
@@ -185,11 +193,6 @@ const initChatApp = () => {
         );
     }
 
-    const removeFromMemberList = (uuid) => {
-        const div = document.getElementById(uuid);
-        if (div) div.remove();
-    };
-
     pubnub = new PubNub({
         publishKey : 'pub-c-8178220e-752c-42ab-82ae-ba202872fef3',
         subscribeKey : 'sub-c-eaafd854-d9a5-11e9-86fd-b2ac05a6ddd9'
@@ -204,14 +207,35 @@ const initChatApp = () => {
             }
         },
         user: (userEvent) => {
-
+            console.log('userEvent', userEvent);
         },
         space: (spaceEvent) => {
             spaceEvent.message.data.event = spaceEvent.message.event;
             modifyChatRoomList(spaceEvent.message.data);
         },
         membership: (membershipEvent) => {
+            const userId = membershipEvent.message.data.userId;
+            const spaceId = membershipEvent.message.data.spaceId;
+            const event = membershipEvent.message.event;
 
+            // If this chat is currently open, add the user update to the UI
+            if (spaceId === currentlySelectedChat) {
+                if (event === CREATE_EVENT) {
+                    pubnub.getUser({
+                        userId
+                    }, (status, response) => {
+                        if (!status.error) {
+                            const name = response.data.name;
+                            addToMemberList({
+                                id: userId,
+                                name
+                            });
+                        }
+                    });
+                } else if (event === DELETE_EVENT) {
+                    removeFromMemberList(userId);
+                }
+            }
         }
     });
 
@@ -323,11 +347,16 @@ function renderChat(chatRoomId, members) {
         pubnub.getMembers(
         {
             spaceId: chatRoomId,
-            limit: 100
+            limit: 100,
+            include: {
+                userFields: true
+            }
         },
         (status, response) => {
             members = response.data;
-            members.forEach(addToMemberList);
+            members.forEach((member) => {
+                addToMemberList(member.user);
+            });
         });
     } else {
         members.forEach(addToMemberList);
