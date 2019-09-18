@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <title>PubNub Chat</title>
+    <link rel="stylesheet" type="text/css" href="./style.css">
+</head>
+<body>
+
+    <div id="username-input-modal" class="modal-background">
+        <div class="user-input-modal">
+            <h3>Chat Username</h3>
+            <p>
+                Input a username, 16 characters or fewer
+            </p>
+            <input id="username-input" type="text" maxlength="16" class="modal-text-input">
+            <div id="join-button" class="modal-button disabled">
+                Join Chat
+            </div>
+        </div>
+    </div>
+
+    <div id="chat-interface" class="chat-interface">
+        <div class="header">
+            <div class="left">Room Members</div>
+            <div class="middle">
+                <h1>PubNub Chat</h1>
+            </div>
+            <div class="right">
+                <span id="new-chat-room" class="plus-button">New<br /> Chat Room</span>
+            </div>
+        </div>
+        <div class="left-list">
+            <div id="member-list" class="member-list"></div>
+            <span class="list-label">Chat Rooms</span>
+            <div id="chatroom-list" class="member-list chat-rooms-list"></div>
+        </div>
+        <div id="chat" class="chat">
+            <div id="log" class="log"></div>
+            <div class="input-container">
+                <div class="textarea-container">
+                    <textarea id="message-input" placeholder="Global Chat..." maxlength="10000"></textarea>
+                </div>
+                <div id="submit" class="submit">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script type="text/javascript" src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.25.2.js"></script>
+<script src="app.js" type="text/javascript"></script>
+
+</html>
