@@ -5,7 +5,8 @@
 This chat demo uses plain old JavaScript to offer a global chat and group chats to users. These are easily implemented by using Spaces, Users, and Memberships which are a part of [Objects](https://www.pubnub.com/docs/web-javascript/pubnub-objects?devrel_gh=pubnub-objects-js-chat-demo).
 
 ## Tutorial for Building Chat with PubNub and Objects
-[Blog post for Building Chat with PubNub and Objects](https://www.pubnub.com/blog/?devrel_gh=pubnub-objects-js-chat-demo)
+**[Blog post for Building Chat with PubNub and Objects](https://www.pubnub.com/blog/?devrel_gh=pubnub-objects-js-chat-demo)**
+
 [![PubNub Chat with Objects in JavaScript Screenshot](https://i.imgur.com/PPyvGDA.png)](https://adambavosa.com/pubnub-js-webrtc/example/)
 
 ## Run
