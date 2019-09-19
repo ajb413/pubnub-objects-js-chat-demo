@@ -11,8 +11,8 @@ const submit = document.getElementById('submit');
 const newChatRoomButton = document.getElementById('new-chat-room');
 const hide = 'hide';
 
-const PUBNUB_PUBLISH_KEY = '_your_pubnub_publish_key_here_';
-const PUBNUB_SUBSCRIBE_KEY = '_your_pubnub_subscribe_key_here_';
+const PUBNUB_PUBLISH_KEY = 'pub-c-488f73bb-ab97-4000-81e7-b126e222bae1';
+const PUBNUB_SUBSCRIBE_KEY = 'sub-c-74c8458a-db22-11e9-aa3a-6edd521294c5';
 
 const CREATE_EVENT = 'create';
 const UPDATE_EVENT = 'update';
