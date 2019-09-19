@@ -409,7 +409,7 @@ div.input-container {
     }
 
     html, body {
-        font-size: 16px;
+        font-size: 14px;
     }
 }
 
@@ -447,5 +447,6 @@ div.input-container {
     div.delete-button {
         width: 20px;
         height: 20px;
+        transform: none;
     }
 }

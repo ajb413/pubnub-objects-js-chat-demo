@@ -11,6 +11,9 @@ const submit = document.getElementById('submit');
 const newChatRoomButton = document.getElementById('new-chat-room');
 const hide = 'hide';
 
+const PUBNUB_PUBLISH_KEY = 'pub-c-488f73bb-ab97-4000-81e7-b126e222bae1';
+const PUBNUB_SUBSCRIBE_KEY = 'sub-c-74c8458a-db22-11e9-aa3a-6edd521294c5';
+
 const CREATE_EVENT = 'create';
 const UPDATE_EVENT = 'update';
 const DELETE_EVENT = 'delete';
@@ -73,6 +76,14 @@ const removeFromMemberList = (uuid) => {
     if (div) div.remove();
 };
 
+// Change a user's name in the UI to the updated one
+//     this fires when the user event listener fires on line 232
+const changeUserName = (uuid, newName) => {
+    const div = document.getElementById(uuid);
+    if (div) {
+        div.children.item(1).innerText = newName;
+    }
+};
 
 const initChatApp = () => {
     const modifyChatRoomList = (spaceEvent, autoSelect) => {
@@ -137,6 +148,10 @@ const initChatApp = () => {
                 // Swap in this chat to the main view
                 renderChat(spaceEvent.id, membersInChat);
 
+                if (spaceEvent.id === globalChannel) {
+                    chatRoomListDomElement.click();
+                }
+
                 // Select the chat message input box automatically
                 messageInput.focus();
             });
@@ -194,8 +209,8 @@ const initChatApp = () => {
     }
 
     pubnub = new PubNub({
-        publishKey : 'pub-c-8178220e-752c-42ab-82ae-ba202872fef3',
-        subscribeKey : 'sub-c-eaafd854-d9a5-11e9-86fd-b2ac05a6ddd9'
+        publishKey : PUBNUB_PUBLISH_KEY,
+        subscribeKey : PUBNUB_SUBSCRIBE_KEY
     });
 
     // This PubNub listener powers the text chat and member user list population.
@@ -207,7 +222,12 @@ const initChatApp = () => {
             }
         },
         user: (userEvent) => {
-            console.log('userEvent', userEvent);
+            const event = userEvent.message.event;
+            if (event === UPDATE_EVENT) {
+                const name = userEvent.message.data.name;
+                const id = userEvent.message.data.id;
+                changeUserName(id, name);
+            }
         },
         space: (spaceEvent) => {
             spaceEvent.message.data.event = spaceEvent.message.event;
@@ -260,11 +280,11 @@ const initChatApp = () => {
 
             if (!globalSpaceHasBeenMade) {
                 createSpace(globalChannel);
+            } else {
+                // Automatically select the global chat when the app loads
+                chatList.children.item(0).classList.add(SELECTED_CLASS);
+                renderChat(globalChannel);
             }
-
-            // Automatically select the global chat when the app loads
-            chatList.children.item(0).classList.add(SELECTED_CLASS);
-            renderChat(globalChannel);
         }
     );
 
@@ -297,6 +317,17 @@ const initChatApp = () => {
                                 console.error(joinSpacesStatus, joinSpacesResponse);
                             }
                         });
+                    }
+                }
+            );
+        } else {
+            pubnub.updateUser(
+                {
+                    id: pubnub.getUUID(),
+                    name: username
+                }, (updateUserStatus, updateUserResponse) => {
+                    if (updateUserStatus.error) {
+                        console.error(updateUserStatus, updateUserResponse);
                     }
                 }
             );
@@ -438,11 +469,20 @@ function createUserListItem(id, name, isChat) {
 }
 
 function createMessageHTML(messageEvent) {
-    const text = messageEvent.message.text;
+    let text;
+    let senderName;
+    try {
+        text = messageEvent.message.text;
+        text = text.replace(/<[^>]*>/g, '');
+        senderName = messageEvent.message.sender_name;
+    } catch (err) {
+        text = '';
+        senderName = 'Unknown';
+    }
     const jsTime = parseInt(messageEvent.timetoken.substring(0,13));
     const dateString = new Date(jsTime).toLocaleString();
     const senderUuid = messageEvent.publisher;
-    const senderName = messageEvent.message.sender_name;
+    
 
     const div = document.createElement('div');
     const b = document.createElement('b');
