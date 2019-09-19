@@ -7,7 +7,7 @@ This chat demo uses plain old JavaScript to offer a global chat and group chats 
 ## Tutorial for Building Chat with PubNub and Objects
 **[Blog post for Building Chat with PubNub and Objects](https://www.pubnub.com/blog/?devrel_gh=pubnub-objects-js-chat-demo)**
 
-[![PubNub Chat with Objects in JavaScript Screenshot](https://i.imgur.com/PPyvGDA.png)](http://adambavosa.com/pubnub-objects-js-chat-demo/)
+[![PubNub Chat with Objects in JavaScript Screenshot](https://i.imgur.com/PPyvGDA.png)](https://ajb413.github.io/pubnub-objects-js-chat-demo/)
 
 ## Run
 Make a PubNub Account and get your forever free [PubNub API Keys](https://dashboard.pubnub.com/signup?devrel_gh=pubnub-objects-js-chat-demo). Then enable **Storage & Playback** with unlimited retention in the [Admin Dashboard](https://dashboard.pubnub.com/?devrel_gh=pubnub-objects-js-chat-demo). This will store your chat app's messages, so users can see messages they missed when they log on later.
